@@ -12,7 +12,7 @@ SCRIPT_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
 echo $SCRIPT_ROOT
 CODEGEN_PKG=${CODEGEN_PKG:-$(
   cd "${SCRIPT_ROOT}"
-  go mod vendor
+  # go mod vendor
   ls -d -1 ./vendor/k8s.io/code-generator
 )}
 
@@ -22,6 +22,7 @@ bash "${CODEGEN_PKG}"/generate-groups.sh "all" \
   "autoscaling:v1alpha1 ensurance:v1alpha1 prediction:v1alpha1 analysis:v1alpha1" \
   --output-base "$SCRIPT_ROOT" \
   --go-header-file "${SCRIPT_ROOT}/hack/boilerplate/boilerplate.go.txt"
+
 
 cp -r $SCRIPT_ROOT/github.com/gocrane/api/* $SCRIPT_ROOT
 

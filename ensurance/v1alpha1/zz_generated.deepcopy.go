@@ -360,16 +360,6 @@ func (in *ObjectiveEnsurance) DeepCopyInto(out *ObjectiveEnsurance) {
 		*out = new(MetricRule)
 		(*in).DeepCopyInto(*out)
 	}
-	if in.AvoidanceThreshold != nil {
-		in, out := &in.AvoidanceThreshold, &out.AvoidanceThreshold
-		*out = new(int32)
-		**out = **in
-	}
-	if in.RestoreThreshold != nil {
-		in, out := &in.RestoreThreshold, &out.RestoreThreshold
-		*out = new(int32)
-		**out = **in
-	}
 	return
 }
 

@@ -68,6 +68,7 @@ type PodQOSEnsurancePolicyList struct {
 // +genclient:nonNamespaced
 // +kubebuilder:resource:scope=Cluster
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +k8s:defaulter-gen=true
 
 // NodeQOSEnsurancePolicy is the Schema for the nodeqosensurancepolicies API
 type NodeQOSEnsurancePolicy struct {
@@ -125,12 +126,12 @@ type ObjectiveEnsurance struct {
 	// How many times the rule is reach, to trigger avoidance action, default is 1
 	// +optional
 	// +kubebuilder:default=1
-	AvoidanceThreshold *int32 `json:"avoidanceThreshold,omitempty"`
+	AvoidanceThreshold int32 `json:"avoidanceThreshold,omitempty"`
 
 	// How many times the rule can restore, default is 1
 	// +optional
 	// +kubebuilder:default=1
-	RestoreThreshold *int32 `json:"restoreThreshold,omitempty"`
+	RestoreThreshold int32 `json:"restoreThreshold,omitempty"`
 
 	// Avoidance action when be triggered
 	AvoidanceActionName string `json:"actionName"`
@@ -236,6 +237,7 @@ type AvoidanceActionStatus struct {
 // +genclient
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +k8s:defaulter-gen=true
 // +kubebuilder:resource:scope="Cluster"
 
 // AvoidanceAction defines Avoidance action
