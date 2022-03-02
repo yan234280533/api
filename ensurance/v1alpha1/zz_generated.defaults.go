@@ -7,17 +7,20 @@ package v1alpha1
 
 import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/klog/v2"
 )
 
 // RegisterDefaults adds defaulters functions to the given scheme.
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
+	klog.Warning("aaaaaaaa")
 	scheme.AddTypeDefaultingFunc(&NodeQOSEnsurancePolicy{}, func(obj interface{}) { SetObjectDefaults_NodeQOSEnsurancePolicy(obj.(*NodeQOSEnsurancePolicy)) })
 	return nil
 }
 
 func SetObjectDefaults_NodeQOSEnsurancePolicy(in *NodeQOSEnsurancePolicy) {
+	klog.Warning("bbbbbbb")
 	SetDefaults_NodeQOSEnsurancePolicy(in)
 	for i := range in.Spec.ObjectiveEnsurances {
 		a := &in.Spec.ObjectiveEnsurances[i]
