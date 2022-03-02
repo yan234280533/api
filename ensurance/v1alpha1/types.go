@@ -125,7 +125,6 @@ type ObjectiveEnsurance struct {
 
 	// How many times the rule is reach, to trigger avoidance action, default is 1
 	// +optional
-	// +kubebuilder:default=1
 	AvoidanceThreshold int32 `json:"avoidanceThreshold,omitempty"`
 
 	// How many times the rule can restore, default is 1
