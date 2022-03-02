@@ -109,7 +109,6 @@ spec:
                       description: Avoidance action when be triggered
                       type: string
                     avoidanceThreshold:
-                      default: 1
                       description: How many times the rule is reach, to trigger avoidance
                         action, default is 1
                       format: int32
