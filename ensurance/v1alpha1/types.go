@@ -15,6 +15,104 @@ const (
 	AvoidanceActionStrategyPreview AvoidanceActionStrategy = "Preview"
 )
 
+// +genclient
+// +genclient:nonNamespaced
+// +kubebuilder:resource:scope=Cluster,shortName=pl
+// +kubebuilder:subresource:status
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// PriorityLevel defines the qos behaviours for this priority's pods
+type PriorityLevel struct {
+	metav1.TypeMeta `json:",inline"`
+
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec PriorityLevelSpec `json:"spec"`
+
+	Status PriorityLevelStatus `json:"status,omitempty"`
+}
+
+type PriorityLevelSpec struct {
+	// PriorityClassName the priority name associated.
+	// +required
+	PriorityClassName string `json:"priorityClassName"`
+
+	// ResourcePriority define the priority for various resources
+	// +optional
+	ResourcePriority ResourcePriority `json:"resourcePriority,omitempty"`
+
+	// AvoidanceStrategy define the avoidance strategy for pods
+	// +optional
+	AvoidanceStrategy AvoidanceStrategy `json:"avoidanceStrategy,omitempty"`
+
+	// ResourcetMutation define if the service need to mutate resource to expand resource
+	// +optional
+	ResourceMutation ResourceMutation `json:"resourceMutation,omitempty"`
+}
+
+// PriorityLevelStatus defines the desired status of PriorityLevel
+type PriorityLevelStatus struct {
+}
+
+type ResourceMutation struct {
+	// +optional
+	RequestMutations []ResourcetMutation `json:"requestMutations,omitempty"`
+	// +optional
+	LimitMutations []ResourcetMutation `json:"limitMutations,omitempty"`
+}
+
+type ResourcePriority struct {
+	// CPUPriority define the cpu priority for the pods.
+	// CPUPriority range [0,7], 0 is the highest level.
+	// When the cpu resource is shortage, the low level pods would be throttled
+	// +kubebuilder:validation:Minimum=0
+	// +kubebuilder:validation:Maximum=7
+	// +optional
+	CPUPriority int32 `json:"cpuPriority,omitempty"`
+	// MemoryPriority define the memory priority for the pods.
+	// MemoryPriority range [0,7], 0 is the highest level
+	// When the memory is shortage, the low level pods would priority be killed
+	// +kubebuilder:validation:Minimum=0
+	// +kubebuilder:validation:Maximum=7
+	// +optional
+	MemoryPriority int32 `json:"memoryPriority,omitempty"`
+	// NetworkIOPriority define the network IO priority for the pods.
+	// NetworkIOPriority range [0,7], 0 is the highest level.
+	// When the network device is busy, the low level pods would be throttled
+	// +kubebuilder:validation:Minimum=0
+	// +kubebuilder:validation:Maximum=7
+	// +optional
+	NetworkIOPriority int32 `json:"networkIOPriority,omitempty"`
+}
+
+type AvoidanceStrategy struct {
+	// +optional
+	AllowThrottle bool `json:"allowThrottle,omitempty"`
+	// +optional
+	AllowEvict bool `json:"allowEvict,omitempty"`
+}
+
+type ResourcetMutation struct {
+	// ResourceName is the origin resource name which to be mutated
+	// +kubebuilder:validation:Type=string
+	// +kubebuilder:validation:Enum=cpu;memory
+	// +required
+	ResourceName corev1.ResourceName `json:"resourceName,omitempty"`
+
+	// MutatingResourceName is the resource name mutate
+	// +required
+	MutatingResourceName corev1.ResourceName `json:"mutatingResourceName,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// PriorityLevelList contains a list of PriorityLevel
+type PriorityLevelList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []PriorityLevel `json:"items"`
+}
+
 // PodQOSEnsurancePolicySpec defines the desired status of PodQOSEnsurancePolicy
 type PodQOSEnsurancePolicySpec struct {
 	// Selector is a label query over pods that should match the policy
@@ -31,14 +129,11 @@ type QualityProbe struct {
 	// HTTPGet specifies the http request to perform.
 	// +optional
 	HTTPGet *corev1.HTTPGetAction `json:"httpGet,omitempty"`
-	// Init delay time for handler
-	// Defaults to 5
+
+	// TimeoutSeconds is the timeout for request.
+	// Defaults to 0, no timeout forever
 	// +optional
-	InitialDelaySeconds *int32 `json:"initialDelaySeconds,omitempty"`
-	// Timeout for request.
-	// Defaults to 0, instead not timeout
-	// +optional
-	TimeoutSeconds *int32 `json:"timeoutSeconds,omitempty"`
+	TimeoutSeconds int32 `json:"timeoutSeconds,omitempty"`
 }
 
 // PodQOSEnsurancePolicyStatus defines the observed status of PodQOSEnsurancePolicy
@@ -47,6 +142,7 @@ type PodQOSEnsurancePolicyStatus struct {
 
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:resource:shortName=pep
 
 // PodQOSEnsurancePolicy is the Schema for the podqosensurancepolicies API
 type PodQOSEnsurancePolicy struct {
@@ -68,7 +164,7 @@ type PodQOSEnsurancePolicyList struct {
 
 // +genclient
 // +genclient:nonNamespaced
-// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:resource:scope=Cluster,shortName=nep
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // NodeQOSEnsurancePolicy is the Schema for the nodeqosensurancepolicies API
@@ -102,7 +198,8 @@ type NodeQualityProbe struct {
 	// +optional
 	NodeLocalGet *NodeLocalGet `json:"nodeLocalGet,omitempty"`
 
-	// TimeoutSeconds is the timeout for request
+	// TimeoutSeconds is the timeout for request.
+	// Defaults to 0, no timeout forever.
 	// +optional
 	TimeoutSeconds int32 `json:"timeoutSeconds,omitempty"`
 }
@@ -239,7 +336,7 @@ type AvoidanceActionStatus struct {
 // +genclient
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-// +kubebuilder:resource:scope="Cluster"
+// +kubebuilder:resource:scope="Cluster",shortName=avoid
 
 // AvoidanceAction defines Avoidance action
 type AvoidanceAction struct {
