@@ -24,6 +24,10 @@ func (c *FakeEnsuranceV1alpha1) PodQOSEnsurancePolicies(namespace string) v1alph
 	return &FakePodQOSEnsurancePolicies{c, namespace}
 }
 
+func (c *FakeEnsuranceV1alpha1) PriorityLevels() v1alpha1.PriorityLevelInterface {
+	return &FakePriorityLevels{c}
+}
+
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
 func (c *FakeEnsuranceV1alpha1) RESTClient() rest.Interface {

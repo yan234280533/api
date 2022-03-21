@@ -14,6 +14,8 @@ type Interface interface {
 	NodeQOSEnsurancePolicies() NodeQOSEnsurancePolicyInformer
 	// PodQOSEnsurancePolicies returns a PodQOSEnsurancePolicyInformer.
 	PodQOSEnsurancePolicies() PodQOSEnsurancePolicyInformer
+	// PriorityLevels returns a PriorityLevelInformer.
+	PriorityLevels() PriorityLevelInformer
 }
 
 type version struct {
@@ -40,4 +42,9 @@ func (v *version) NodeQOSEnsurancePolicies() NodeQOSEnsurancePolicyInformer {
 // PodQOSEnsurancePolicies returns a PodQOSEnsurancePolicyInformer.
 func (v *version) PodQOSEnsurancePolicies() PodQOSEnsurancePolicyInformer {
 	return &podQOSEnsurancePolicyInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// PriorityLevels returns a PriorityLevelInformer.
+func (v *version) PriorityLevels() PriorityLevelInformer {
+	return &priorityLevelInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

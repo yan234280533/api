@@ -17,3 +17,7 @@ type PodQOSEnsurancePolicyListerExpansion interface{}
 // PodQOSEnsurancePolicyNamespaceListerExpansion allows custom methods to be added to
 // PodQOSEnsurancePolicyNamespaceLister.
 type PodQOSEnsurancePolicyNamespaceListerExpansion interface{}
+
+// PriorityLevelListerExpansion allows custom methods to be added to
+// PriorityLevelLister.
+type PriorityLevelListerExpansion interface{}
